@@ -1,12 +1,14 @@
 import express from "express";
 import axios from "axios";
+import cache from "../middleware/cache.js"
+import limiter from "../middleware/limiter.js"
 
 const server = express();
 
 let GEO_URL = "http://api.openweathermap.org/geo/1.0/direct"
 let BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
-server.post("/", async (req, res) => {
+server.post("/", limiter, cache('1 hour'), async (req, res) => {
     try {
         const { city, state, country } = req.body;
         const geo = new URLSearchParams({
